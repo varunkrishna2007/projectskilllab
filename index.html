@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Varunsingh Jamadar | CSE & Systems Portfolio</title>
+  <!-- Google Fonts: Space Grotesk & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #050811;
+      --bg-card: rgba(13, 19, 38, 0.65);
+      --accent-cyan: #00f2fe;
+      --accent-blue: #4facfe;
+      --accent-purple: #9b51e0;
+      --accent-green: #00ff87;
+      --text-main: #e2e8f0;
+      --text-muted: #94a3b8;
+      --border-glow: rgba(0, 242, 254, 0.25);
+      --font-sans: 'Space Grotesk', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      selection-background-color: var(--accent-cyan);
+      selection-color: #000;
+    }
+
+    ::selection {
+      background: var(--accent-cyan);
+      color: #050811;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050811;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, var(--accent-cyan), var(--accent-purple));
+      border-radius: 3px;
+    }
+
+    /* Fixed 3D WebGL Canvas */
+    #webgl-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* HUD Overlay Elements */
+    .hud-overlay {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: radial-gradient(circle at 50% 50%, transparent 60%, rgba(5, 8, 17, 0.85) 100%);
+    }
+
+    .hud-telemetry {
+      position: fixed;
+      bottom: 24px;
+      left: 28px;
+      z-index: 10;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      background: rgba(5, 8, 17, 0.75);
+      border: 1px solid rgba(0, 242, 254, 0.2);
+      padding: 10px 14px;
+      border-radius: 8px;
+      backdrop-filter: blur(8px);
+      display: flex;
+      gap: 18px;
+      pointer-events: auto;
+    }
+
+    .hud-telemetry span strong {
+      color: var(--accent-cyan);
+    }
+
+    /* Navigation Bar */
+    header {
+      position: fixed;
+      top: 0;
+      width: 100%;
+      z-index: 100;
+      padding: 18px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(5, 8, 17, 0.65);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
+    .brand {
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.5px;
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 10px var(--accent-green);
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.3); opacity: 0.6; }
+    }
+
+    nav {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    nav a {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.25s ease, text-shadow 0.25s ease;
+    }
+
+    nav a:hover {
+      color: var(--accent-cyan);
+      text-shadow: 0 0 8px rgba(0, 242, 254, 0.6);
+    }
+
+    .terminal-btn {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 8px 14px;
+      border-radius: 6px;
+      background: rgba(0, 242, 254, 0.1);
+      border: 1px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .terminal-btn:hover {
+      background: var(--accent-cyan);
+      color: #050811;
+      box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+    }
+
+    /* Main Content Wrapper */
+    main {
+      position: relative;
+      z-index: 5;
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 6%;
+    }
+
+    section {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 120px 0 80px;
+    }
+
+    /* Section Headers */
+    .section-tag {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--accent-cyan);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-tag::before {
+      content: "//";
+      color: var(--accent-purple);
+    }
+
+    .section-title {
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      margin-bottom: 48px;
+      letter-spacing: -1px;
+      background: linear-gradient(90deg, #ffffff, #94a3b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Hero Section */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: center;
+      gap: 40px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 6px 14px;
+      border-radius: 999px;
+      background: rgba(155, 81, 224, 0.15);
+      border: 1px solid rgba(155, 81, 224, 0.4);
+      color: #d8b4fe;
+      margin-bottom: 22px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.6rem, 5.5vw, 4.4rem);
+      line-height: 1.08;
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-blue) 50%, var(--accent-purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-mono);
+      font-size: 1.05rem;
+      color: var(--accent-green);
+      margin-bottom: 20px;
+      min-height: 1.6em;
+    }
+
+    .hero-desc {
+      font-size: 1.08rem;
+      line-height: 1.7;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin-bottom: 34px;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .btn-primary {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 14px 28px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      color: #050811;
+      text-decoration: none;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      box-shadow: 0 0 20px rgba(0, 242, 254, 0.35);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 30px rgba(0, 242, 254, 0.65);
+    }
+
+    .btn-secondary {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      padding: 14px 28px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-main);
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s ease;
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      background: rgba(0, 242, 254, 0.06);
+    }
+
+    /* 3D Interactive Tilt Cards */
+    .tilt-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 28px;
+      backdrop-filter: blur(16px);
+      transform-style: preserve-3d;
+      transform: perspective(1000px);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      overflow: hidden;
+    }
+
+    .tilt-card:hover {
+      border-color: var(--border-glow);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 25px rgba(0, 242, 254, 0.12);
+    }
+
+    .card-glare {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .tilt-card:hover .card-glare {
+      opacity: 1;
+    }
+
+    .card-content {
+      transform: translateZ(30px);
+    }
+
+    /* About & Architecture Bento Grid */
+    .bento-grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 24px;
+    }
+
+    .bento-span-7 { grid-column: span 7; }
+    .bento-span-5 { grid-column: span 5; }
+    .bento-span-4 { grid-column: span 4; }
+    .bento-span-8 { grid-column: span 8; }
+
+    .bento-title {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--accent-cyan);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .bento-heading {
+      font-size: 1.4rem;
+      margin-bottom: 14px;
+      color: #fff;
+    }
+
+    .bento-text {
+      color: var(--text-muted);
+      line-height: 1.65;
+      font-size: 0.96rem;
+    }
+
+    .code-snippet {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      background: rgba(5, 8, 17, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 16px;
+      border-radius: 10px;
+      margin-top: 16px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      overflow-x: auto;
+    }
+
+    .code-kw { color: #ff7b72; }
+    .code-fn { color: #d2a8ff; }
+    .code-str { color: #a5d6ff; }
+    .code-cm { color: #6e7681; }
+
+    /* Projects Grid */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 28px;
+    }
+
+    .project-status {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 99px;
+      background: rgba(0, 255, 135, 0.1);
+      color: var(--accent-green);
+      border: 1px solid rgba(0, 255, 135, 0.3);
+    }
+
+    .project-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 16px 0 12px;
+      color: #fff;
+    }
+
+    .project-desc {
+      color: var(--text-muted);
+      font-size: 0.94rem;
+      line-height: 1.65;
+      margin-bottom: 20px;
+    }
+
+    .tech-stack {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .tech-pill {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      padding: 5px 11px;
+      border-radius: 6px;
+      background: rgba(0, 242, 254, 0.08);
+      border: 1px solid rgba(0, 242, 254, 0.2);
+      color: #bae6fd;
+    }
+
+    /* Skills & Coursework Matrix */
+    .skills-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 24px;
+    }
+
+    .skill-list {
+      list-style: none;
+      margin-top: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .skill-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.08);
+    }
+
+    .skill-bar-wrap {
+      width: 90px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .skill-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+      border-radius: 3px;
+    }
+
+    /* Interactive CLI Modal */
+    .terminal-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(5, 8, 17, 0.8);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .terminal-modal.active {
+      display: flex;
+    }
+
+    .terminal-window {
+      width: 100%;
+      max-width: 720px;
+      background: #090d1a;
+      border: 1px solid var(--accent-cyan);
+      border-radius: 12px;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85), 0 0 30px rgba(0, 242, 254, 0.2);
+      overflow: hidden;
+      font-family: var(--font-mono);
+    }
+
+    .terminal-header {
+      background: #11182c;
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .terminal-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .dot.red { background: #ff5f56; cursor: pointer; }
+    .dot.yellow { background: #ffbd2e; }
+    .dot.green { background: #27c93f; }
+
+    .terminal-body {
+      padding: 20px;
+      height: 360px;
+      overflow-y: auto;
+      font-size: 0.85rem;
+      line-height: 1.65;
+      color: #cbd5e1;
+    }
+
+    .terminal-input-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .prompt-user {
+      color: var(--accent-green);
+      white-space: nowrap;
+    }
+
+    #cli-input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      width: 100%;
+      outline: none;
+    }
+
+    footer {
+      position: relative;
+      z-index: 5;
+      text-align: center;
+      padding: 40px 6% 90px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 960px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .bento-span-7, .bento-span-5, .bento-span-4, .bento-span-8 {
+        grid-column: span 12;
+      }
+      nav a { display: none; }
+      .hud-telemetry { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Three.js 3D WebGL Background Canvas -->
+  <canvas id="webgl-canvas"></canvas>
+  <div class="hud-overlay"></div>
+
+  <!-- Live 3D Telemetry Bar -->
+  <div class="hud-telemetry">
+    <span>CORE: <strong>ONLINE</strong></span>
+    <span>CAM_Z: <strong id="hud-cam-z">30.0</strong></span>
+    <span>ROT_Y: <strong id="hud-rot-y">0.00</strong> rad</span>
+    <span>LOC: <strong>BLR // IN</strong></span>
+  </div>
+
+  <!-- Top Navigation -->
+  <header>
+    <a href="#hero" class="brand">
+      <span class="brand-dot"></span>
+      <span>VARUNSINGH.SYS</span>
+    </a>
+    <nav>
+      <a href="#about">01. // ABOUT</a>
+      <a href="#projects">02. // PROJECTS</a>
+      <a href="#skills">03. // STACK & CORE</a>
+      <a href="#beyond">04. // BEYOND_CODE</a>
+      <button class="terminal-btn" id="open-terminal">~LAUNCH_CLI</button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 00. HERO SECTION -->
+    <section id="hero" class="hero">
+      <div class="hero-grid">
+        <div>
+          <div class="hero-badge">
+            <span>⚡ SYSTEM ARCHITECTURE // ALGORITHMS // AI</span>
+          </div>
+          <h1>
+            Varunsingh <br />
+            <span class="gradient-text">Jamadar</span>
+          </h1>
+          <div class="hero-subtitle" id="typewriter"></div>
+          <p class="hero-desc">
+            Computer Science & Engineering undergraduate at <strong>RV College of Engineering, Bengaluru</strong>. Passionate about building low-level systems engines, federated machine learning pipelines, and real-time algorithmic visualizers from first principles.
+          </p>
+          <div class="btn-group">
+            <a href="#projects" class="btn-primary">EXPLORE_PROJECTS()</a>
+            <a href="#about" class="btn-secondary">READ_ARCHITECTURE.MD</a>
+          </div>
+        </div>
+
+        <!-- Hero 3D Tilt Status Card -->
+        <div class="tilt-card">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div class="bento-title">
+              <span>SYS_DIAGNOSTICS.SH</span>
+              <span style="color: var(--accent-green);">● ACTIVE</span>
+            </div>
+            <div class="code-snippet">
+<span class="code-kw">struct</span> <span class="code-fn">EngineerProfile</span> {
+  std::string name = <span class="code-str">"Varunsingh Jamadar"</span>;
+  std::string institute = <span class="code-str">"RVCE, Bengaluru"</span>;
+  std::string degree = <span class="code-str">"B.E. in CSE"</span>;
+  std::vector&lt;std::string&gt; domains = {
+    <span class="code-str">"Systems Engineering"</span>,
+    <span class="code-str">"Competitive Programming (C++)"</span>,
+    <span class="code-str">"Federated Learning &amp; AI"</span>,
+    <span class="code-str">"DSP &amp; Audio Engineering"</span>
+  };
+};
+<span class="code-cm">// Scroll or move cursor to interact with 3D Core</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01. ABOUT & SYSTEM ARCHITECTURE -->
+    <section id="about">
+      <span class="section-tag">01 // SYSTEM IDENTITY</span>
+      <h2 class="section-title">First-Principles Engineering</h2>
+
+      <div class="bento-grid">
+        <div class="tilt-card bento-span-7">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div class="bento-title">
+              <span>KERNEL_PHILOSOPHY</span>
+              <span>[0x01]</span>
+            </div>
+            <h3 class="bento-heading">Deep Architectural Understanding</h3>
+            <p class="bento-text">
+              Rather than treating frameworks as black boxes, I focus on line-by-line execution tracing, mathematical rigor, and memory-level efficiency. Whether designing a custom pathfinding engine in C, analyzing operating system process scheduling, or implementing privacy-preserving machine learning models, I build systems from the ground up.
+            </p>
+            <div class="code-snippet">
+              <span class="code-cm">// Core Academic &amp; Research Focus @ RVCE</span><br/>
+              • Operating Systems (Process Synchronization, Virtual Memory, File Systems)<br/>
+              • Data Structures &amp; Algorithms (Graph Theory, Dynamic Programming)<br/>
+              • Analog &amp; Digital Logic Design &amp; Quantum Computing Fundamentals
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card bento-span-5">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div class="bento-title">
+              <span>COMPETITIVE_PROGRAMMING</span>
+              <span>[0x02]</span>
+            </div>
+            <h3 class="bento-heading">Algorithmic Problem Solving</h3>
+            <p class="bento-text">
+              Actively solving complex data structures and algorithmic challenges in <strong>C++</strong> across <strong>LeetCode</strong> and <strong>Codeforces</strong>. Focused on optimizing time and space complexity for trees, graphs, dynamic programming, and bit manipulation.
+            </p>
+            <div class="tech-stack" style="margin-top: 20px;">
+              <span class="tech-pill">C++ STL</span>
+              <span class="tech-pill">Graph Algorithms</span>
+              <span class="tech-pill">Dynamic Programming</span>
+              <span class="tech-pill">LeetCode: Varunsingh_Jamadar</span>
+              <span class="tech-pill">Codeforces</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02. FEATURED PROJECTS -->
+    <section id="projects">
+      <span class="section-tag">02 // DEPLOYED BUILDS</span>
+      <h2 class="section-title">Featured Engineering Projects</h2>
+
+      <div class="projects-grid">
+        <!-- Project 1 -->
+        <div class="tilt-card">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-family:var(--font-mono); color:var(--accent-cyan); font-size:0.8rem;">PRJ_01 // AI & SECURITY</span>
+              <span class="project-status">ACTIVE RESEARCH</span>
+            </div>
+            <h3 class="project-title">Federated Learning Bank Fraud Detection</h3>
+            <p class="project-desc">
+              Privacy-preserving distributed fraud detection framework inspired by the SWIFT AI pilot. Trains decentralized anomaly detection models across client nodes without sharing raw financial logs, utilizing <strong>cosine similarity</strong> and gradient inspection to flag malicious or poisoned client updates.
+            </p>
+            <div class="tech-stack">
+              <span class="tech-pill">Python</span>
+              <span class="tech-pill">PyTorch</span>
+              <span class="tech-pill">Federated Learning</span>
+              <span class="tech-pill">Cosine Similarity</span>
+              <span class="tech-pill">Anomaly Detection</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 2 -->
+        <div class="tilt-card">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-family:var(--font-mono); color:var(--accent-cyan); font-size:0.8rem;">PRJ_02 // SYSTEMS & FULL-STACK</span>
+              <span class="project-status">COMPLETED</span>
+            </div>
+            <h3 class="project-title">Smart Disaster Evacuation System</h3>
+            <p class="project-desc">
+              High-performance emergency routing platform powered by a core <strong>C pathfinding engine</strong> paired with a multi-page interactive <strong>Streamlit</strong> analytics dashboard. Computes optimal evacuation corridors under dynamic hazard constraints with full audit logging.
+            </p>
+            <div class="tech-stack">
+              <span class="tech-pill">C Engine</span>
+              <span class="tech-pill">Graph Pathfinding</span>
+              <span class="tech-pill">Python</span>
+              <span class="tech-pill">Streamlit</span>
+              <span class="tech-pill">Plotly</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 3 -->
+        <div class="tilt-card">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-family:var(--font-mono); color:var(--accent-cyan); font-size:0.8rem;">PRJ_03 // SENSOR FUSION</span>
+              <span class="project-status">PROTOTYPE</span>
+            </div>
+            <h3 class="project-title">Acoustic Mine Vehicle Fog Safety System</h3>
+            <p class="project-desc">
+              Collision-avoidance architecture designed for heavy haulage operations in zero-visibility fog conditions. Integrates acoustic signal processing with an <strong>Adaptive Extended Kalman Filter (AEKF)</strong> for real-time localization and proximity tracking.
+            </p>
+            <div class="tech-stack">
+              <span class="tech-pill">Adaptive EKF</span>
+              <span class="tech-pill">Signal Processing</span>
+              <span class="tech-pill">Acoustic Localization</span>
+              <span class="tech-pill">NumPy</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 4 -->
+        <div class="tilt-card">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-family:var(--font-mono); color:var(--accent-cyan); font-size:0.8rem;">PRJ_04 // AUDIO DSP & ML</span>
+              <span class="project-status">R&D</span>
+            </div>
+            <h3 class="project-title">Automated Guitar Tone & Preset Synthesizer</h3>
+            <p class="project-desc">
+              Audio analysis pipeline that extracts spectral and dynamic guitar tone parameters from raw stems to automatically select <strong>Neural DSP Archetype</strong> plugins and generate ready-to-load XML preset configurations.
+            </p>
+            <div class="tech-stack">
+              <span class="tech-pill">Audio DSP</span>
+              <span class="tech-pill">Spectral Analysis</span>
+              <span class="tech-pill">XML Serialization</span>
+              <span class="tech-pill">Neural DSP</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 5 -->
+        <div class="tilt-card">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-family:var(--font-mono); color:var(--accent-cyan); font-size:0.8rem;">PRJ_05 // EMBEDDED HARDWARE</span>
+              <span class="project-status">DEPLOYED</span>
+            </div>
+            <h3 class="project-title">IoT Smart Parking & Automated Barricade</h3>
+            <p class="project-desc">
+              Hardware prototype built around an <strong>Arduino</strong> microcontroller integrating IR obstacle modules, <strong>HC-SR04 ultrasonic sensors</strong>, and servo-actuated entry barricades for real-time slot occupancy detection and automated gate control.
+            </p>
+            <div class="tech-stack">
+              <span class="tech-pill">Arduino</span>
+              <span class="tech-pill">Embedded C++</span>
+              <span class="tech-pill">HC-SR04 Ultrasonic</span>
+              <span class="tech-pill">IR Sensors</span>
+              <span class="tech-pill">Servo Control</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project 6 -->
+        <div class="tilt-card">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <span style="font-family:var(--font-mono); color:var(--accent-cyan); font-size:0.8rem;">PRJ_06 // RESEARCH PUBLICATION</span>
+              <span class="project-status">IEEE FORMAT</span>
+            </div>
+            <h3 class="project-title">IEEE System Architecture Research Paper</h3>
+            <p class="project-desc">
+              Co-authored a formal IEEE conference manuscript detailing system architecture workflows, algorithmic benchmarking, and empirical dataset insights under faculty mentorship at RV College of Engineering.
+            </p>
+            <div class="tech-stack">
+              <span class="tech-pill">IEEE Layout</span>
+              <span class="tech-pill">System Architecture</span>
+              <span class="tech-pill">Data Analysis</span>
+              <span class="tech-pill">Technical Writing</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03. TECHNICAL ARSENAL -->
+    <section id="skills">
+      <span class="section-tag">03 // TECHNICAL MATRIX</span>
+      <h2 class="section-title">Languages, Systems & Tooling</h2>
+
+      <div class="skills-container">
+        <div class="tilt-card">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div class="bento-title"><span>LANGUAGES</span><span>[CORE]</span></div>
+            <ul class="skill-list">
+              <li class="skill-item">
+                <span>C++ (STL / Competitive)</span>
+                <div class="skill-bar-wrap"><div class="skill-bar" style="width: 95%"></div></div>
+              </li>
+              <li class="skill-item">
+                <span>C (Systems / Pointers)</span>
+                <div class="skill-bar-wrap"><div class="skill-bar" style="width: 92%"></div></div>
+              </li>
+              <li class="skill-item">
+                <span>Python (AI / Data)</span>
+                <div class="skill-bar-wrap"><div class="skill-bar" style="width: 90%"></div></div>
+              </li>
+              <li class="skill-item">
+                <span>HTML5 / CSS3 / JS</span>
+                <div class="skill-bar-wrap"><div class="skill-bar" style="width: 85%"></div></div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tilt-card">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div class="bento-title"><span>FRAMEWORKS & AI</span><span>[ML/WEB]</span></div>
+            <ul class="skill-list">
+              <li class="skill-item">
+                <span>PyTorch</span>
+                <div class="skill-bar-wrap"><div class="skill-bar" style="width: 86%"></div></div>
+              </li>
+              <li class="skill-item">
+                <span>Streamlit & Plotly</span>
+                <div class="skill-bar-wrap"><div class="skill-bar" style="width: 92%"></div></div>
+              </li>
+              <li class="skill-item">
+                <span>NumPy & Pandas</span>
+                <div class="skill-bar-wrap"><div class="skill-bar" style="width: 90%"></div></div>
+              </li>
+              <li class="skill-item">
+                <span>Three.js / WebGL</span>
+                <div class="skill-bar-wrap"><div class="skill-bar" style="width: 80%"></div></div>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="tilt-card">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div class="bento-title"><span>CS FUNDAMENTALS</span><span>[THEORY]</span></div>
+            <ul class="skill-list">
+              <li class="skill-item">
+                <span>Data Structures & Algos</span>
+                <div class="skill-bar-wrap"><div class="skill-bar" style="width: 94%"></div></div>
+              </li>
+              <li class="skill-item">
+                <span>Operating Systems (OSTEP)</span>
+                <div class="skill-bar-wrap"><div class="skill-bar" style="width: 90%"></div></div>
+              </li>
+              <li class="skill-item">
+                <span>Digital Logic Design</span>
+                <div class="skill-bar-wrap"><div class="skill-bar" style="width: 85%"></div></div>
+              </li>
+              <li class="skill-item">
+                <span>Git / Linux / VS Code</span>
+                <div class="skill-bar-wrap"><div class="skill-bar" style="width: 92%"></div></div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04. BEYOND CODE (ELECTRIC GUITAR & AUDIO PRODUCTION) -->
+    <section id="beyond">
+      <span class="section-tag">04 // PARALLEL THREADS</span>
+      <h2 class="section-title">Acoustics, Shred Mechanics & Signal Chains</h2>
+
+      <div class="bento-grid">
+        <div class="tilt-card bento-span-8">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div class="bento-title">
+              <span>ALAAP_MUSIC_CLUB // ELECTRIC GUITARIST</span>
+              <span>5+ YEARS</span>
+            </div>
+            <h3 class="bento-heading">From Neoclassical Metal to Hindustani Classical Fusion</h3>
+            <p class="bento-text">
+              Outside of compilers and kernels, I have spent over five years mastering electric guitar on an <strong>Ibanez JEM Jr</strong> and a <strong>Fender Stratocaster</strong>. As an active member of the <strong>Alaap</strong> music club at RVCE, I blend high-speed rock/neoclassical techniques (alternate picking, three-string sweep arpeggios, multi-finger tapping) with Hindustani classical compositions like <em>Raag Miyan Ki Malhar</em>.
+            </p>
+            <div class="tech-stack" style="margin-top: 20px;">
+              <span class="tech-pill">Ibanez JEM Jr</span>
+              <span class="tech-pill">Fender Stratocaster</span>
+              <span class="tech-pill">Neural DSP Archetype: Plini & Rabea</span>
+              <span class="tech-pill">FL Studio DAW</span>
+              <span class="tech-pill">Sweep & Alternate Picking</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="tilt-card bento-span-4">
+          <div class="card-glare"></div>
+          <div class="card-content">
+            <div class="bento-title">
+              <span>INTERACTIVE_TERMINAL</span>
+              <span>CLI_READY</span>
+            </div>
+            <h3 class="bento-heading">Query My System</h3>
+            <p class="bento-text" style="margin-bottom: 20px;">
+              Want to inspect my profile via command line? Launch the interactive shell to run commands like <code>whoami</code>, <code>projects</code>, or <code>guitar</code>.
+            </p>
+            <button class="btn-primary" id="open-terminal-2" style="width:100%; border:none; cursor:pointer;">
+              OPEN_TERMINAL()
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>ENGINEERED BY VARUNSINGH JAMADAR // RUNNING LOCALLY ON THREE.JS WEBGL ENGINE</p>
+  </footer>
+
+  <!-- Interactive Terminal Modal -->
+  <div class="terminal-modal" id="terminal-modal">
+    <div class="terminal-window">
+      <div class="terminal-header">
+        <div class="terminal-dots">
+          <div class="dot red" id="close-terminal" title="Close"></div>
+          <div class="dot yellow"></div>
+          <div class="dot green"></div>
+        </div>
+        <span style="font-size: 0.78rem; color: var(--text-muted);">varunsingh@rvce-arch: ~ (interactive-shell)</span>
+        <span style="font-size: 0.75rem; color: var(--accent-cyan);">ESC to close</span>
+      </div>
+      <div class="terminal-body" id="terminal-output">
+        <div>Welcome to <span style="color:var(--accent-cyan)">VarunsinghOS v3.0 (WebGL Kernel)</span></div>
+        <div>Type <span style="color:var(--accent-green)">help</span> to view available system commands.</div>
+        <br/>
+        <div class="terminal-input-line">
+          <span class="prompt-user">varunsingh@rvce:~$</span>
+          <input type="text" id="cli-input" autocomplete="off" spellcheck="false" autofocus />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <script>
+    /* ==========================================================================
+       1. TYPEWRITER SUBTITLE EFFECT
+       ========================================================================== */
+    const roles = [
+      "> B.E. Computer Science & Engineering @ RVCE",
+      "> C / C++ Systems & Competitive Programmer",
+      "> Federated Learning & AI Architecture",
+      "> Electric Guitarist & Audio DSP Enthusiast"
+    ];
+    let roleIdx = 0;
+    let charIdx = 0;
+    let isDeleting = false;
+    const typeEl = document.getElementById("typewriter");
+
+    function typeLoop() {
+      const currentText = roles[roleIdx];
+      if (!isDeleting) {
+        typeEl.textContent = currentText.slice(0, ++charIdx) + "█";
+        if (charIdx === currentText.length) {
+          isDeleting = true;
+          setTimeout(typeLoop, 2200);
+          return;
+        }
+      } else {
+        typeEl.textContent = currentText.slice(0, --charIdx) + "█";
+        if (charIdx === 0) {
+          isDeleting = false;
+          roleIdx = (roleIdx + 1) % roles.length;
+        }
+      }
+      setTimeout(typeLoop, isDeleting ? 30 : 55);
+    }
+    typeLoop();
+
+    /* ==========================================================================
+       2. 3D PERSPECTIVE TILT EFFECT FOR CARDS
+       ========================================================================== */
+    const tiltCards = document.querySelectorAll(".tilt-card");
+    tiltCards.forEach(card => {
+      const glare = card.querySelector(".card-glare");
+      card.addEventListener("mousemove", e => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        const rotateX = ((y - centerY) / centerY) * -7;
+        const rotateY = ((x - centerX) / centerX) * 7;
+
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.015, 1.015, 1.015)`;
+        if (glare) {
+          glare.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(0, 242, 254, 0.18), transparent 65%)`;
+        }
+      });
+
+      card.addEventListener("mouseleave", () => {
+        card.style.transform = "perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)";
+      });
+    });
+
+    /* ==========================================================================
+       3. INTERACTIVE TERMINAL CLI
+       ========================================================================== */
+    const modal = document.getElementById("terminal-modal");
+    const openBtn1 = document.getElementById("open-terminal");
+    const openBtn2 = document.getElementById("open-terminal-2");
+    const closeBtn = document.getElementById("close-terminal");
+    const cliInput = document.getElementById("cli-input");
+    const terminalOutput = document.getElementById("terminal-output");
+
+    function toggleTerminal(show) {
+      modal.classList.toggle("active", show);
+      if (show) cliInput.focus();
+    }
+
+    openBtn1.addEventListener("click", () => toggleTerminal(true));
+    openBtn2.addEventListener("click", () => toggleTerminal(true));
+    closeBtn.addEventListener("click", () => toggleTerminal(false));
+    window.addEventListener("keydown", e => {
+      if (e.key === "Escape") toggleTerminal(false);
+    });
+
+    const commands = {
+      help: `Available commands:
+  <span style="color:#00f2fe">whoami</span>     - Display biographical & academic summary
+  <span style="color:#00f2fe">projects</span>   - List core engineering builds
+  <span style="color:#00f2fe">skills</span>     - Inspect programming languages & toolchains
+  <span style="color:#00f2fe">guitar</span>     - View electric guitar rig & DSP setup
+  <span style="color:#00f2fe">clear</span>      - Clear terminal buffer`,
+      whoami: `Varunsingh Jamadar
+  • Undergraduate CSE Student @ RV College of Engineering, Bengaluru
+  • Focus: Systems Engineering, Competitive Programming (C++), Federated Learning`,
+      projects: `[1] Federated Learning Bank Fraud Detection (PyTorch, Cosine Similarity)
+[2] Smart Disaster Evacuation System (C Pathfinding Engine + Streamlit)
+[3] Acoustic Mine Vehicle Fog Safety System (Adaptive Extended Kalman Filter)
+[4] Automated Guitar Tone & Neural DSP XML Synthesizer
+[5] IoT Smart Parking Prototype (Arduino, Ultrasonic & IR Sensors)`,
+      skills: `Languages : C++, C, Python, JavaScript, HTML/CSS
+Libraries : PyTorch, Streamlit, Plotly, Pandas, NumPy, Three.js
+Core CS   : Data Structures & Algorithms, Operating Systems (OSTEP), Digital Logic`,
+      guitar: `Guitars   : Ibanez JEM Jr & Fender Stratocaster
+DSP/DAW   : Neural DSP (Archetype: Plini, Rabea), Eventide Octavox, FL Studio
+Club      : Alaap Music Club @ RVCE (Rock, Neoclassical Metal & Hindustani Classical Fusion)`
+    };
+
+    cliInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        const raw = cliInput.value.trim();
+        const cmd = raw.toLowerCase();
+        const inputLine = cliInput.parentElement;
+
+        const historyLine = document.createElement("div");
+        historyLine.innerHTML = `<span class="prompt-user">varunsingh@rvce:~$</span> ${raw}`;
+        terminalOutput.insertBefore(historyLine, inputLine);
+
+        if (cmd === "clear") {
+          const children = Array.from(terminalOutput.children);
+          children.forEach(c => {
+            if (!c.classList.contains("terminal-input-line")) c.remove();
+          });
+        } else if (cmd !== "") {
+          const resp = document.createElement("div");
+          resp.style.marginBottom = "12px";
+          resp.style.whiteSpace = "pre-wrap";
+          resp.innerHTML = commands[cmd] || `<span style="color:#ff5f56">Command not found: ${raw}. Type 'help' for available commands.</span>`;
+          terminalOutput.insertBefore(resp, inputLine);
+        }
+
+        cliInput.value = "";
+        terminalOutput.scrollTop = terminalOutput.scrollHeight;
+      }
+    });
+
+    /* ==========================================================================
+       4. THREE.JS 3D INTERACTIVE COMPUTER SCIENCE SCENE
+       ========================================================================== */
+    const canvas = document.getElementById("webgl-canvas");
+    const scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x050811, 0.018);
+
+    const camera = new THREE.PerspectiveCamera(
+      60,
+      window.innerWidth / window.innerHeight,
+      0.1,
+      1000
+    );
+    camera.position.set(0, 2, 30);
+
+    const renderer = new THREE.WebGLRenderer({
+      canvas,
+      antialias: true,
+      alpha: true
+    });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    // Group to hold the central 3D Algorithmic Core
+    const coreGroup = new THREE.Group();
+    coreGroup.position.set(8, 1, 0);
+    scene.add(coreGroup);
+
+    // Outer Wireframe Icosahedron (Represents Network / Graph Topology)
+    const outerGeo = new THREE.IcosahedronGeometry(6.5, 1);
+    const outerMat = new THREE.MeshBasicMaterial({
+      color: 0x00f2fe,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.35
+    });
+    const outerMesh = new THREE.Mesh(outerGeo, outerMat);
+    coreGroup.add(outerMesh);
+
+    // Inner Glowing Octahedron (Represents Kernel Core)
+    const innerGeo = new THREE.OctahedronGeometry(3.6, 2);
+    const innerMat = new THREE.MeshStandardMaterial({
+      color: 0x9b51e0,
+      emissive: 0x3b0764,
+      wireframe: true,
+      roughness: 0.2,
+      metalness: 0.8
+    });
+    const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+    coreGroup.add(innerMesh);
+
+    // Orbiting Data Ring (Torus)
+    const ringGeo = new THREE.TorusGeometry(9.2, 0.06, 16, 100);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: 0x00ff87,
+      transparent: true,
+      opacity: 0.45
+    });
+    const ringMesh = new THREE.Mesh(ringGeo, ringMat);
+    ringMesh.rotation.x = Math.PI / 2.4;
+    coreGroup.add(ringMesh);
+
+    // Second Orbiting Ring
+    const ring2Mesh = ringMesh.clone();
+    ring2Mesh.material = new THREE.MeshBasicMaterial({
+      color: 0x4facfe,
+      transparent: true,
+      opacity: 0.3
+    });
+    ring2Mesh.rotation.x = -Math.PI / 3;
+    ring2Mesh.rotation.y = Math.PI / 4;
+    coreGroup.add(ring2Mesh);
+
+    // 3D Particle Data Cloud (Nodes in Space)
+    const particleCount = 1400;
+    const posArray = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount * 3; i++) {
+      posArray[i] = (Math.random() - 0.5) * 95;
+    }
+    const particlesGeo = new THREE.BufferGeometry();
+    particlesGeo.setAttribute("position", new THREE.BufferAttribute(posArray, 3));
+    const particlesMat = new THREE.PointsMaterial({
+      size: 0.14,
+      color: 0x00f2fe,
+      transparent: true,
+      opacity: 0.75
+    });
+    const particleSystem = new THREE.Points(particlesGeo, particlesMat);
+    scene.add(particleSystem);
+
+    // Cybernetic Floor Grid
+    const gridHelper = new THREE.GridHelper(120, 60, 0x00f2fe, 0x1e293b);
+    gridHelper.position.y = -12;
+    gridHelper.material.transparent = true;
+    gridHelper.material.opacity = 0.25;
+    scene.add(gridHelper);
+
+    // Scene Lights
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const pointLight = new THREE.PointLight(0x00f2fe, 2.5, 60);
+    pointLight.position.set(10, 12, 15);
+    scene.add(pointLight);
+
+    // Mouse Parallax & Scroll Tracking
+    let mouseX = 0;
+    let mouseY = 0;
+    let scrollY = window.scrollY;
+
+    window.addEventListener("mousemove", e => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+    });
+
+    window.addEventListener("scroll", () => {
+      scrollY = window.scrollY;
+    });
+
+    const hudCamZ = document.getElementById("hud-cam-z");
+    const hudRotY = document.getElementById("hud-rot-y");
+
+    // Animation Loop
+    const clock = new THREE.Clock();
+    function animate() {
+      requestAnimationFrame(animate);
+      const elapsedTime = clock.getElapsedTime();
+
+      // Rotate the 3D Core
+      outerMesh.rotation.y = elapsedTime * 0.22;
+      outerMesh.rotation.x = elapsedTime * 0.12;
+      innerMesh.rotation.y = -elapsedTime * 0.45;
+      innerMesh.rotation.z = elapsedTime * 0.25;
+      ringMesh.rotation.z = elapsedTime * 0.3;
+      ring2Mesh.rotation.z = -elapsedTime * 0.2;
+
+      // Subtle floating motion
+      coreGroup.position.y = 1 + Math.sin(elapsedTime * 1.2) * 0.8;
+
+      // Scroll-driven 3D choreography
+      const scrollFactor = scrollY * 0.01;
+      coreGroup.position.x = 8 - Math.sin(scrollFactor * 0.6) * 12;
+      coreGroup.rotation.y = scrollFactor * 0.4;
+
+      const targetCamZ = 30 - Math.min(scrollFactor * 1.5, 14);
+      camera.position.z += (targetCamZ - camera.position.z) * 0.05;
+
+      // Mouse parallax camera tilt
+      camera.position.x += (mouseX * 3.5 - camera.position.x) * 0.05;
+      camera.position.y += (-mouseY * 2.5 + 2 - camera.position.y) * 0.05;
+      camera.lookAt(0, 0, 0);
+
+      // Slow drift of particle field
+      particleSystem.rotation.y = elapsedTime * 0.03 + scrollFactor * 0.08;
+
+      // Update HUD Telemetry
+      if (hudCamZ && hudRotY) {
+        hudCamZ.textContent = camera.position.z.toFixed(1);
+        hudRotY.textContent = outerMesh.rotation.y.toFixed(2);
+      }
+
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    // Responsive Canvas Resize
+    window.addEventListener("resize", () => {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  </script>
+</body>
+</html>
